@@ -1,14 +1,28 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using RazorPagesbooks.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-builder.Services.AddDbContext<RazorPagesBookContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("RazorPagesBookContext")));
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDbContext<RazorPagesBookContext>(options =>
+        options.UseSqlite(builder.Configuration.GetConnectionString("RazorPagesBookContext")));
+}
+else
+{
+    builder.Services.AddDbContext<RazorPagesBookContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("ProductionBookContext")));
+}
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+}
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
